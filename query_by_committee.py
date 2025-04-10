@@ -3,9 +3,8 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')
 
-from sklearn.datasets import load_iris
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 from modAL.models import ActiveLearner, Committee
 from modAL.disagreement  import vote_entropy_sampling

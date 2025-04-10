@@ -6,7 +6,8 @@ from modAL.models import ActiveLearner
 from modAL.uncertainty import uncertainty_sampling # this will change according to what you choose from strategies
 from get_the_dataset import get_iris, get_breast_cancer # we need to change the dataset because the accuracy is actually 100% for both
 from random_state_generator import generate
-
+import warnings
+warnings.filterwarnings('ignore')
 
 
 RANDOM_STATE = generate(42)

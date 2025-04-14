@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 from modAL.models import ActiveLearner
-from modAL.uncertainty import expected_error_reduction
+from modAL.expected_error import expected_error_reduction
 from get_the_dataset import get_iris, get_breast_cancer
 
 
@@ -68,6 +68,9 @@ for idx in range(n_queries):
     current_metrics = evaluate_metrics(learner, X_test, y_test)
     metrics_history.append(current_metrics)
     performance_history.append(current_metrics['accuracy'])
+
+def return_perforamnce_eer():
+    return performance_history, metrics_history
 
 
 # Print final results

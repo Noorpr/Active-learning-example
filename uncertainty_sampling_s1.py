@@ -7,6 +7,7 @@ from modAL.uncertainty import uncertainty_sampling # this will change according 
 from get_the_dataset import get_iris, get_breast_cancer # we need to change the dataset because the accuracy is actually 100% for both
 from random_state_generator import generate
 import warnings
+import matplotlib.pyplot as plt
 warnings.filterwarnings('ignore')
 
 
@@ -16,7 +17,7 @@ X, y = get_breast_cancer()
 
 X_train, X_pool, y_train, y_pool = train_test_split(X, y, test_size=0.3, random_state=RANDOM_STATE)
 
-iterations = 10
+iterations = 20
 accuracy_list = []
 
 
@@ -37,4 +38,11 @@ for i in range(iterations):
     accuracy_list.append(accuracy_score(y_train, learner.predict(X_train)))
 
 
-print(accuracy_list)
+plt.plot(range(len(accuracy_list)), accuracy_list, label='Uncertainty sampling')
+plt.title('Uncertainty sampling using Iris dataset')
+plt.xlabel('iterataions')
+plt.ylabel('accuracy')
+plt.xlim((1,20))
+plt.xticks(range(1, 21, 2))
+plt.ylim((0, 1.2))
+plt.show()

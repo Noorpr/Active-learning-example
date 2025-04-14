@@ -7,7 +7,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_fscore_support
 from modAL.models import ActiveLearner, Committee
 from modAL.disagreement  import vote_entropy_sampling
-from get_the_dataset import get_iris, get_breast_cancer
 
 def evaluate_metrics(committee, X, y):
     y_pred = committee.predict(X)

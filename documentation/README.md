@@ -100,8 +100,7 @@ This reduces labeling costs while still achieving **high accuracy**.
 ### Query by Committee (QBC)
 
 ![QBC - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/QBC-BreastCancer.png)
-</br>
-![QBC - IRIS][https://github.com/Noorpr/Active-learning-example/blob/main/QBC-IRIS.png]
+![QBC - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/QBC-IRIS.png)
 
 1. First Plot:
 - Starts around 0.90 with fluctuations.

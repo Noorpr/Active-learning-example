@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from modAL.models import ActiveLearner
 from modAL.uncertainty import uncertainty_sampling # this will change according to what you choose from strategies
 from get_the_dataset import get_iris, get_breast_cancer # we need to change the dataset because the accuracy is actually 100% for both
@@ -13,36 +13,33 @@ warnings.filterwarnings('ignore')
 
 RANDOM_STATE = generate(42)
 
-X, y = get_breast_cancer()
+# X, y = get_breast_cancer()
 
-X_train, X_pool, y_train, y_pool = train_test_split(X, y, test_size=0.3, random_state=RANDOM_STATE)
+def uncertainty_sampling_func(X, y):
 
-iterations = 20
-accuracy_list = []
+    X_train, X_pool, y_train, y_pool = train_test_split(X, y, test_size=0.3, random_state=RANDOM_STATE)
 
-
-learner = ActiveLearner(
-    estimator = RandomForestClassifier(n_estimators=100, random_state= RANDOM_STATE),
-    query_strategy = uncertainty_sampling,
-    X_training = X_train,
-    y_training = y_train
-)
-
-for i in range(iterations):
-    query_idx, query_instance = learner.query(X_pool)
-    learner.teach(X_pool[query_idx], y_pool[query_idx])
-
-    X_pool = np.delete(X_pool, query_idx, axis=0)
-    y_pool = np.delete(y_pool, query_idx, axis=0)
-
-    accuracy_list.append(accuracy_score(y_train, learner.predict(X_train)))
+    iterations = 20
 
 
-plt.plot(range(len(accuracy_list)), accuracy_list, label='Uncertainty sampling')
-plt.title('Uncertainty sampling using Iris dataset')
-plt.xlabel('iterataions')
-plt.ylabel('accuracy')
-plt.xlim((1,20))
-plt.xticks(range(1, 21, 2))
-plt.ylim((0, 1.2))
-plt.show()
+    learner = ActiveLearner(
+        estimator = RandomForestClassifier(n_estimators=100, random_state= RANDOM_STATE),
+        query_strategy = uncertainty_sampling,
+        X_training = X_train,
+        y_training = y_train
+    )
+
+    accuracy_list = [learner.score(X_pool, y_pool)]
+    
+
+    for i in range(iterations):
+        query_idx, query_instance = learner.query(X_pool)
+        learner.teach(X_pool[query_idx], y_pool[query_idx])
+
+        X_pool = np.delete(X_pool, query_idx, axis=0)
+        y_pool = np.delete(y_pool, query_idx, axis=0)
+        
+
+        accuracy_list.append(accuracy_score(y_pool, learner.predict(X_pool)))
+        
+    return accuracy_list

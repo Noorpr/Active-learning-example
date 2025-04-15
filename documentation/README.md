@@ -78,3 +78,21 @@ This reduces labeling costs while still achieving **high accuracy**.
 - Selects based on **expected improvement** in accuracy
 
 ---
+
+## 🔬 Experiments (Methodology)
+
+### Initial Training
+- Train models on a small initial labeled dataset.
+- Establish baseline performance metrics.
+
+### Active Selection
+- Apply different strategies to select informative samples.
+- Request labels for the selected data points.
+
+### Model Updating
+- Retrain models with newly labeled data.
+- Evaluate performance improvements after each iteration.
+
+---
+
+## 📈 Results

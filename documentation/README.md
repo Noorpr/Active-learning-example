@@ -98,7 +98,6 @@ This reduces labeling costs while still achieving **high accuracy**.
 ## 📈 Results
 
 ### Query by Committee (QBC)
-
 ![QBC - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/QBC-BreastCancer.png)
 ![QBC - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/QBC-IRIS.png)
 
@@ -110,3 +109,18 @@ This reduces labeling costs while still achieving **high accuracy**.
 2. Second Plot:
 - Begins around 0.92, dips, then stabilizes at 0.96.
 - Achieves consistent high accuracy after initial queries.
+
+### Uncertainty Sampling
+![Uncertainty Sampling - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/Uncertainty-BreastCancer.png)
+![Uncertainty Sampling - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/Uncertainty-IRIS.png)
+
+1. First Plot:
+- Begins around 0.988, dips slightly, then quickly rises.
+- Stabilizes near 0.994 after the 3rd iteration.
+- Maintains high accuracy with minor fluctuations.
+
+
+Second Plot:
+- Starts at 0.93 and steadily increases.
+- Reaches 1.00 by the 8th iteration and remains stable.
+- Shows a clear upward trend, indicating effective sample selection.

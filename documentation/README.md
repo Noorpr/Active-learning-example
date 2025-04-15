@@ -120,7 +120,21 @@ This reduces labeling costs while still achieving **high accuracy**.
 - Maintains high accuracy with minor fluctuations.
 
 
-Second Plot:
+2. Second Plot:
 - Starts at 0.93 and steadily increases.
 - Reaches 1.00 by the 8th iteration and remains stable.
 - Shows a clear upward trend, indicating effective sample selection.
+
+### Expected Error Reduction (EER)
+![EER - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/EER-BreastCancer.png)
+![EER - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/EER-IRIS.png)
+
+1. First Plot:
+- Starts around 0.895, dips, then rises sharply to 0.915.
+- Shows fluctuations but ends on an upward trend.
+- Indicates effective learning after initial queries.
+
+2. Second Plot:
+- Begins at 0.89 with repeated peaks and valleys.
+- Ends with a sharp rise after a significant dip.
+- Suggests inconsistent performance with some recovery.

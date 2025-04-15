@@ -99,6 +99,6 @@ This reduces labeling costs while still achieving **high accuracy**.
 
 ### Query by Committee (QBC)
 
-![QBC - Breast Cancer](QBC-BreastCancer.png)
+![QBC - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/QBC-BreastCancer.png)
 
 The plot above illustrates the progress of model accuracy using the Query by Committee strategy over 20 queries. Initially, the accuracy fluctuates around 0.90, indicating some instability as the model learns from the selected samples. However, after about 10 queries, there is a noticeable improvement, with accuracy peaking at over 0.94. This suggests that the strategy effectively identifies informative samples, leading to significant performance gains. The slight dips in accuracy highlight the ongoing challenge of selecting the most beneficial data points, but overall, the trend is positive.

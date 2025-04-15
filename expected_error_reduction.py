@@ -1,83 +1,146 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')
-
-from sklearn.ensemble import RandomForestClassifier
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import precision_recall_fscore_support
-from modAL.models import ActiveLearner
-from modAL.expected_error import expected_error_reduction
-from get_the_dataset import get_iris, get_breast_cancer
+from sklearn.metrics import log_loss, precision_recall_fscore_support
+from sklearn.base import clone
+from sklearn.datasets import load_breast_cancer
 
+import time
 
-# Load the dataset
-X, y = get_breast_cancer()
+# Load and split data
+data = load_breast_cancer()
+X, y = data.data, data.target
 
-# Split the data into training, validation, and test sets
 X_train_initial, X_pool, y_train_initial, y_pool = train_test_split(
-    X, y, test_size=0.8, random_state=42, stratify=y
+    X, y, test_size=0.8, stratify=y, random_state=42
 )
 
 X_pool, X_test, y_pool, y_test = train_test_split(
-    X_pool, y_pool, test_size=0.2, random_state=42, stratify=y_pool
+    X_pool, y_pool, test_size=0.2, stratify=y_pool, random_state=42
 )
 
-# Initialize ActiveLearner with Expected Error Reduction
-learner = ActiveLearner(
-    estimator=RandomForestClassifier(n_estimators=100, random_state=42),
-    query_strategy=expected_error_reduction,
-    X_training=X_train_initial,
-    y_training=y_train_initial
-)
+# Base model
+base_model = LogisticRegression(max_iter=1000, solver='lbfgs')
 
-def evaluate_metrics(learner, X, y):
-    y_pred = learner.predict(X)
+# Train initial model
+model = clone(base_model)
+model.fit(X_train_initial, y_train_initial)
+
+# Performance evaluation
+def evaluate_metrics(model, X, y):
+    y_pred = model.predict(X)
     precision, recall, f1, _ = precision_recall_fscore_support(y, y_pred, average='weighted')
     return {
-        'accuracy': learner.score(X, y),
+        'accuracy': model.score(X, y),
         'precision': precision,
         'recall': recall,
         'f1': f1
     }
 
-# Initialize performance metrics storage
-performance_history = [learner.score(X_test, y_test)]
-metrics_history = [evaluate_metrics(learner, X_test, y_test)]
-n_queries = 20
+performance_history = [model.score(X_test, y_test)]
+metrics_history = [evaluate_metrics(model, X_test, y_test)]
+
+# --- Expected Error Reduction strategy ---
+def expected_error_reduction_manual(model, X_pool, X_train, y_train, possible_labels, validation_set):
+    errors = []
+
+    for i, x in enumerate(X_pool):
+        x = x.reshape(1, -1)
+        probs = model.predict_proba(x).flatten()
+
+        expected_error = 0
+
+        for label in possible_labels:
+            # Simulate teaching this sample with this label
+            new_X = np.vstack([X_train, x])
+            new_y = np.hstack([y_train, label])
+
+            temp_model = clone(model)
+            temp_model.fit(new_X, new_y)
+
+            # Estimate error on validation set (e.g., log loss)
+            y_val_pred = temp_model.predict_proba(validation_set)
+            val_error = log_loss(y_pool, y_val_pred, labels=possible_labels)
+
+            # Weight by probability of label
+            expected_error += probs[label] * val_error
+
+        errors.append(expected_error)
+
+    # Return index of sample with lowest expected error
+    return np.argmin(errors)
 
 # Active learning loop
-for idx in range(n_queries):
-    # Query for new instance using Expected Error Reduction
-    query_idx, query_instance = learner.query(X_pool)
-    
-    # Get the true label for the queried instance
-    queried_label = y_pool[query_idx]
-    
-    # Teach the learner
-    learner.teach(
-        X=X_pool[query_idx].reshape(1, -1),
-        y=y_pool[query_idx].reshape(1,)
+n_queries = 10
+for i in range(n_queries):
+    print(f"\nQuery {i+1}/{n_queries}...", flush=True)
+    start = time.time()
+
+    # Query strategy: EER
+    query_idx = expected_error_reduction_manual(
+        model, X_pool, X_train_initial, y_train_initial,
+        possible_labels=np.unique(y),
+        validation_set=X_pool  # or use X_test if preferred
     )
-    
-    # Remove the queried instance from the pool
+
+    query_instance = X_pool[query_idx].reshape(1, -1)
+    query_label = y_pool[query_idx].reshape(1,)
+
+    # Teach the model
+    X_train_initial = np.vstack([X_train_initial, query_instance])
+    y_train_initial = np.hstack([y_train_initial, query_label])
+
+    # Remove from pool
     X_pool = np.delete(X_pool, query_idx, axis=0)
-    y_pool = np.delete(y_pool, query_idx)
-    
-    # Calculate and store performance metrics
-    current_metrics = evaluate_metrics(learner, X_test, y_test)
+    y_pool = np.delete(y_pool, query_idx, axis=0)
+
+    # Retrain model
+    model = clone(base_model)
+    model.fit(X_train_initial, y_train_initial)
+
+    # Record performance
+    current_metrics = evaluate_metrics(model, X_test, y_test)
     metrics_history.append(current_metrics)
     performance_history.append(current_metrics['accuracy'])
 
-def return_perforamnce_eer():
-    return performance_history, metrics_history
+    print(f"Done in {time.time() - start:.2f}s | Accuracy: {current_metrics['accuracy']:.3f}")
 
-
-# Print final results
+# Final results
 print("\nFinal Results:")
-print(f"Initial accuracy: {performance_history[0]:.3f}")
-print(f"Final accuracy: {performance_history[-1]:.3f}")
-print("\nFinal Metrics:")
-print(f"Precision: {metrics_history[-1]['precision']:.3f}")
-print(f"Recall: {metrics_history[-1]['recall']:.3f}")
-print(f"F1 Score: {metrics_history[-1]['f1']:.3f}")
+print(f"Initial Accuracy: {performance_history[0]:.3f}")
+print(f"Final Accuracy: {performance_history[-1]:.3f}")
+print(f"Final Precision: {metrics_history[-1]['precision']:.3f}")
+print(f"Final Recall: {metrics_history[-1]['recall']:.3f}")
+print(f"Final F1: {metrics_history[-1]['f1']:.3f}")
+
+# Plotting
+plt.plot(range(1, len(performance_history)), performance_history[1:], label='Expected Error Reduction', marker='o')
+plt.title('Expected Error Reduction using Breast Cancer dataset')
+plt.xlabel('Iterations')
+plt.ylabel('Accuracy')
+plt.xlim((1, len(performance_history)-1))
+plt.xticks(range(1, len(performance_history), 2))
+plt.ylim((0, 1.2))
+plt.grid(True)
+plt.legend()
+plt.show()
+
+# Plot all metrics: accuracy, precision, recall, f1
+plt.figure(figsize=(12, 6))
+metrics_names = ['accuracy', 'precision', 'recall', 'f1']
+
+for metric in metrics_names:
+    values = [m[metric] for m in metrics_history]
+    plt.plot(range(len(values)), values, label=metric.capitalize(), marker='o')
+
+plt.xlabel('Number of Queries')
+plt.ylabel('Score')
+plt.title('Performance Metrics Over Time (EER Strategy)')
+plt.legend()
+plt.grid(True)
+plt.ylim(0, 1.05)
+plt.xticks(range(len(metrics_history)))
+plt.show()

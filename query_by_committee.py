@@ -47,7 +47,6 @@ def query_active_learning(X, y):
     )
 
     # Initialize performance metrics storage
-    performance_history = [committee.score(X_test, y_test)]
     metrics_history = [evaluate_metrics(committee, X_test, y_test)]
     n_queries = 20
 
@@ -69,5 +68,4 @@ def query_active_learning(X, y):
         # Calculate and store performance metrics
         current_metrics = evaluate_metrics(committee, X_test, y_test)
         metrics_history.append(current_metrics)
-        performance_history.append(current_metrics['accuracy'])
-    return performance_history, metrics_history
+    return metrics_history

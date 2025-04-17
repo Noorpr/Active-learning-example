@@ -24,7 +24,8 @@ iris_X, iris_y = get_iris()
 
 st.sidebar.header("Options")
 st.sidebar.write("choose what dataset you will compare the results on:")
-option = st.sidebar.selectbox("Dataset:", ["Breast Cancer", "Iris"])
+option1 = st.sidebar.selectbox("Dataset:", ["Breast Cancer", "Iris"])
+option2 = st.sidebar.selectbox("which metric do you want:", ['f1', 'recall', 'precision'])
 
 # measures for qbc
 performance_history_qbc = []
@@ -33,22 +34,24 @@ metrics_history_qbc = []
 
 # measures for us
 accuracy_list = []
+metrics_list = []
 
 # measures for eer
 results = dict()
 baseModel = RandomForestClassifier(random_state=42)
 
 if st.sidebar.button("Apply Option"):
-    if option == 'Breast Cancer':
+    if option1 == 'Breast Cancer':
         performance_history_qbc , metrics_history_qbc = query_active_learning(breast_X, breast_y)
-        accuracy_list = uncertainty_sampling_func(breast_X, breast_y)
+        accuracy_list, metrics_list = uncertainty_sampling_func(breast_X, breast_y)
         results = active_learning_with_eer(baseModel, breast_X, breast_y,n_initial=10, n_queries=7)
 
-    elif option == 'Iris':
+    elif option1 == 'Iris':
         performance_history_qbc , metrics_history_qbc = query_active_learning(iris_X, iris_y)
-        accuracy_list = uncertainty_sampling_func(iris_X, iris_y)
+        accuracy_list, metrics_list = uncertainty_sampling_func(iris_X, iris_y)
         results = active_learning_with_eer(baseModel, iris_X, iris_y,n_initial=10, n_queries=7)
     
+
     fig , ax = plt.subplots(nrows=1, ncols=3, figsize=(20,5))
     ax[0].plot(performance_history_qbc, label='Accuracy', marker='o')
     ax[0].set_title('Query By Committee')
@@ -75,6 +78,23 @@ if st.sidebar.button("Apply Option"):
     fig.suptitle("all of three strategies")
     
     st.pyplot(fig)
+
+
+
+    fig, ax = plt.subplots(figsize=(20, 5))
+    ax.plot([m[option2] for m in metrics_list], label='Uncertainty Sampling', color='red')
+    ax.plot([m[option2] for m in metrics_history_qbc], label='Query by Committee', color='green')
+    metrics_history_eer = results['metrics_history']
+    ax.plot([m[option2] for m in metrics_history_eer], label="Expected Error Reduction", color='orange')
+    ax.set_xticks(range(0, 21, 2))
+    ax.set_title(f"{option2} score comparison")
+    ax.grid(True)
+
+    st.pyplot(fig)
+
+
+    st.write("Active Learning is used when Labeling data is expensive, time-consuming, or requires expert knowledge (like medical images, legal documents, etc.).")
+    st.write("Passive Learning is used when Labeling cost is low or data is already labeled.")
 # strategies
 
 

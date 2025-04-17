@@ -15,6 +15,12 @@ RANDOM_STATE = generate(42)
 
 # X, y = get_breast_cancer()
 
+def evaluate_metric(learner,X_test, y_test):
+    y_pred = learner.predict(X_test)
+    precision, recall, f1, _ = precision_recall_fscore_support(y_test, y_pred, average='weighted')
+    return {'precision' : precision, "recall" : recall, "f1" : f1}
+
+
 def uncertainty_sampling_func(X, y):
 
     X_train, X_pool, y_train, y_pool = train_test_split(X, y, test_size=0.3, random_state=RANDOM_STATE)
@@ -30,7 +36,7 @@ def uncertainty_sampling_func(X, y):
     )
 
     accuracy_list = [learner.score(X_pool, y_pool)]
-    
+    metrics_list = [evaluate_metric(learner,X_pool, y_pool)]
 
     for i in range(iterations):
         query_idx, query_instance = learner.query(X_pool)
@@ -41,5 +47,6 @@ def uncertainty_sampling_func(X, y):
         
 
         accuracy_list.append(accuracy_score(y_pool, learner.predict(X_pool)))
+        metrics_list.append(evaluate_metric(learner, X_pool, y_pool))
         
-    return accuracy_list
+    return accuracy_list, metrics_list

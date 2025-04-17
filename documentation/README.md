@@ -5,6 +5,8 @@
 ---
 
 👤 **Name:** Noor Elden Tariq Mohammed Medhat  
+👤 **Name:** Mahmoud Mamdouh
+👤 **Name:** Alaa Omran  
 📅 **Academic Year:** 2024–2025
 
 ---
@@ -98,8 +100,8 @@ This reduces labeling costs while still achieving **high accuracy**.
 ## 📈 Results
 
 ### Query by Committee (QBC)
-![QBC - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/QBC-BreastCancer.png)
-![QBC - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/QBC-IRIS.png)
+![QBC - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/Images/QBC-BreastCancer.png)
+![QBC - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/Images/QBC-IRIS.png)
 
 1. First Plot:
 - Starts around 0.90 with fluctuations.
@@ -111,8 +113,8 @@ This reduces labeling costs while still achieving **high accuracy**.
 - Achieves consistent high accuracy after initial queries.
 
 ### Uncertainty Sampling
-![Uncertainty Sampling - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/Uncertainty-BreastCancer.png)
-![Uncertainty Sampling - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/Uncertainty-IRIS.png)
+![Uncertainty Sampling - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/Images/Uncertainty-BreastCancer.png)
+![Uncertainty Sampling - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/Images/Uncertainty-IRIS.png)
 
 1. First Plot:
 - Begins around 0.988, dips slightly, then quickly rises.
@@ -126,8 +128,8 @@ This reduces labeling costs while still achieving **high accuracy**.
 - Shows a clear upward trend, indicating effective sample selection.
 
 ### Expected Error Reduction (EER)
-![EER - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/EER-BreastCancer.png)
-![EER - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/EER-IRIS.png)
+![EER - Breast Cancer](https://github.com/Noorpr/Active-learning-example/blob/main/Images/EER-BreastCancer.png)
+![EER - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/Images/EER-IRIS.png)
 
 1. First Plot:
 - Starts around 0.895, dips, then rises sharply to 0.915.
@@ -138,3 +140,16 @@ This reduces labeling costs while still achieving **high accuracy**.
 - Begins at 0.89 with repeated peaks and valleys.
 - Ends with a sharp rise after a significant dip.
 - Suggests inconsistent performance with some recovery.
+
+
+### Random Sampling (RS)
+![Random - Breast](https://github.com/Noorpr/Active-learning-example/blob/main/Images/Random-BreastCancer.png)
+![Random - IRIS](https://github.com/Noorpr/Active-learning-example/blob/main/Images/Random-IRIS.png)
+
+1. First Plot:
+- Starts around 0.96, dips, then rises sharply to 0.94.
+- Shows minor fluctuations but ends on a stable trend.
+
+2. Second Plot:
+- Starts at 0.9 accuracy then after some iterations it reaches to 1.00.
+- Shows consistent learning rate untill absorbing the data patterns compeletly.
